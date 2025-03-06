@@ -1,4 +1,4 @@
-package bristopher.swapcore.commands;
+package bristopher.swapcore;
 
 import bristopher.swapcore.listeners.MobListener;
 import org.bukkit.command.Command;

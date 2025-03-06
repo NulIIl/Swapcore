@@ -1,7 +1,5 @@
 package bristopher.swapcore;
 
-import bristopher.swapcore.commands.SwapEditCommand;
-import bristopher.swapcore.commands.SwapCommand;
 import bristopher.swapcore.listeners.MobListener;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
