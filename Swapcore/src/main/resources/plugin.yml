@@ -5,4 +5,8 @@ api-version: '1.20'
 authors: [<Null>, kilololololololobytes]
 commands:
   swap:
+  
+  SwapEdit:
+    description: Edit the settings for Swap related variables.
+    usage: /SwapEdit <variable> <value>
 
