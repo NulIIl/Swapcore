@@ -40,17 +40,17 @@ public class MobListener implements Listener {
                 ItemStack swapbow = new ItemStack(Material.BOW);
                 swapbow.addUnsafeEnchantment(Enchantment.ARROW_KNOCKBACK, SwapSkelPunch);
                 entity.getEquipment().setItemInMainHand(swapbow);
-				entity.getEquipment().setItemInMainHandDropChance(0.04F);
-					//creates knockback bow
-
-				ItemStack leatherHelmet = new ItemStack(Material.LEATHER_HELMET);
-				LeatherArmorMeta meta = (LeatherArmorMeta) leatherHelmet.getItemMeta();
-				meta.setColor(Color.PURPLE);
-				meta.addEnchant(Enchantment.MENDING, 1, true);
-				leatherHelmet.setItemMeta(meta);
-				entity.getEquipment().setHelmet(leatherHelmet);
-				entity.getEquipment().setHelmetDropChance(0.04F);
-					//makes shiny purple helmet
+		entity.getEquipment().setItemInMainHandDropChance(0.04F);
+			//creates knockback bow
+	
+		ItemStack leatherHelmet = new ItemStack(Material.LEATHER_HELMET);
+		LeatherArmorMeta meta = (LeatherArmorMeta) leatherHelmet.getItemMeta();
+		meta.setColor(Color.PURPLE);
+		meta.addEnchant(Enchantment.MENDING, 1, true);
+		leatherHelmet.setItemMeta(meta);
+		entity.getEquipment().setHelmet(leatherHelmet);
+		entity.getEquipment().setHelmetDropChance(0.04F);
+			//makes shiny purple helmet
             }
         }
     }
@@ -64,6 +64,9 @@ public class MobListener implements Listener {
 				if (inHand != null && inHand.getType() == Material.BOW && inHand.containsEnchantment(Enchantment.ARROW_KNOCKBACK)) {//if holding swap bow                  
 						Entity damaged = event.getEntity();
 					if (damaged instanceof LivingEntity target) {//if player
+						if (event.getFinalDamage() <= 0) {
+				        		return;
+				                }
 						Location skelLoc = skeleton.getLocation();
 						Location targetLoc = target.getLocation();
 							//store skeleton and player
