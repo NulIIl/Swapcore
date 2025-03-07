@@ -25,10 +25,10 @@ import bristopher.swapcore.Swapcore;
 public class MobListener implements Listener {
     							
 		//Spawn Chance Varaibles
-		private int SwapSkelChance = 25; //swap skeleton spawn chance, out of 100
+		private int SwapSkelChance = 100; //swap skeleton spawn chance, out of 100
 
 		//Equipment Base Variables
-		private int SwapSkelPunch = 4; //swap skeleton punch level, out of 5
+		private int SwapSkelPunch = 3; //swap skeleton punch level, out of 5
 
 	@EventHandler
     public void spawnListener(CreatureSpawnEvent e) {				
