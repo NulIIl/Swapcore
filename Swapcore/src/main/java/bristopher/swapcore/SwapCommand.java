@@ -1,10 +1,10 @@
 package bristopher.swapcore;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 public class SwapCommand implements CommandExecutor {
 
@@ -33,13 +33,12 @@ public class SwapCommand implements CommandExecutor {
                             GameManager.setTimer(Long.parseLong(args[1]));
                         }
                     }
-                    default:
-                        sender.sendMessage(ChatColor.RED + "Invalid sub-command. Valid sub-commands: start, stop, list");
+                        sender.sendMessage(Component.text("Invalid sub-command. Valid sub-commands: start, stop, list").color(NamedTextColor.RED));
                         return false;
                 }
                 return true;
             }
-            sender.sendMessage(ChatColor.RED + "Invalid sub-command. Valid sub-commands: start, stop, list");
+            sender.sendMessage(Component.text("Invalid sub-command. Valid sub-commands: start, stop, list").color(NamedTextColor.RED));
             return false;
         }
         return false;
