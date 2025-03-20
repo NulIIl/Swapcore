@@ -1,11 +1,16 @@
 package bristopher.swapcore;
 
-import bristopher.swapcore.listeners.MobListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
-public class SwapEditCommand implements CommandExecutor {
+import bristopher.swapcore.listeners.MobListener;
+
+public class SwapEditCommand implements CommandExecutor, TabCompleter  {
 
     private final MobListener mobListener;
 
@@ -31,6 +36,14 @@ public class SwapEditCommand implements CommandExecutor {
                             mobListener.setSwapSkelPunch(value);
                             sender.sendMessage("SwapSkelPunch set to " + value);
                             break;
+                        case "zombiechance":
+                            mobListener.setSwapZombChance(value);
+                            sender.sendMessage("SwapZombChance set to " + value);
+                            break;
+                        case "zombiespeed":
+                            mobListener.setSwapZombSpeed(value);
+                            sender.sendMessage("SwapZombSpeed set to " + value);
+                            break;
                         default:
                             sender.sendMessage("Invalid variable");
                             return false;
@@ -44,5 +57,27 @@ public class SwapEditCommand implements CommandExecutor {
                 sender.sendMessage("Usage: /SwapEdit <variable> <value>");
                 return false;
             }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> completions = new ArrayList<>();
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            if ("skeletonchance".startsWith(partial)) {
+                completions.add("skeletonchance");
+            }
+            if ("skeletonpunch".startsWith(partial)) {
+                completions.add("skeletonpunch");
+            }
+            if ("zombiechance".startsWith(partial)) {
+                completions.add("zombiechance");
+            }
+            if ("zombiespeed".startsWith(partial)) {
+                completions.add("zombiespeed");
+            }
+        }
+        // You could also add predictions for the second argument if desired (e.g., common values)
+        return completions;
     }
 }

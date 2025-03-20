@@ -1,11 +1,9 @@
 package bristopher.swapcore;
 
-import bristopher.swapcore.listeners.MobListener;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
+
+import bristopher.swapcore.listeners.MobListener;
 
 public final class Swapcore extends JavaPlugin {
     private static Swapcore instance;
@@ -18,9 +16,15 @@ public final class Swapcore extends JavaPlugin {
     public void onEnable() {
         instance = this;
         gameManager = new GameManager();
-        registerCommand("swap", new SwapCommand());
         MobListener mobListener = new MobListener();
-        registerCommand("SwapEdit", new SwapEditCommand(mobListener));
+
+        SwapCommand swapCommand = new SwapCommand();
+        registerCommand("swap", swapCommand);
+       
+        SwapEditCommand swapEditCommand = new SwapEditCommand(mobListener);
+        registerCommand("SwapEdit", swapEditCommand);
+        this.getCommand("SwapEdit").setTabCompleter(swapEditCommand);
+
         registerEvent(mobListener);
     }
 

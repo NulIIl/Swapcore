@@ -52,7 +52,7 @@ public class Game {
                 continue;
             players.add(p.getUniqueId());
         }
-        Bukkit.broadcastMessage("num of players: " + players.size());
+        Bukkit.getServer().broadcast("num of players: " + players.size(), "bukkit.broadcast");
         if (players.size() < 2) {
             players.clear();
             return false;
