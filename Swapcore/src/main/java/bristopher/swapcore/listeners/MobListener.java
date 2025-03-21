@@ -3,6 +3,7 @@ package bristopher.swapcore.listeners;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -11,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -20,9 +22,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import bristopher.swapcore.Swapcore;
@@ -143,8 +148,50 @@ public class MobListener implements Listener {
             }
         }
 	}
-	
 
+	// When an Enderman targets a player, store that player's UUID.
+	@EventHandler
+	public void onEndermanTarget(EntityTargetEvent event) {
+		if (event.getEntity() instanceof Enderman enderman) {
+			if (event.getTarget() instanceof Player player) {
+				// Store the target player's UUID for later swapping.
+				enderman.setMetadata("swapEnderman", new FixedMetadataValue(Swapcore.getInstance(), player.getUniqueId().toString()));
+				// (Optional) You could also store the current location as the initial lastTeleport:
+				// enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation()));
+			} else {
+				// If the Enderman loses its player target, clear metadata.
+				enderman.removeMetadata("swapEnderman", Swapcore.getInstance());
+				enderman.removeMetadata("lastTeleport", Swapcore.getInstance());
+			}
+		}
+	}
+
+	// Every time an Enderman teleports, teleport the aggroed player to its previous teleport destination.
+	@EventHandler
+	public void onEndermanTeleport(EntityTeleportEvent event) {
+		if (event.getEntity() instanceof Enderman enderman && enderman.hasMetadata("swapEnderman")) {
+			// If a previous teleport location exists, teleport the target player there.
+			if (enderman.hasMetadata("lastTeleport")) {
+				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
+				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
+				if (!targetMeta.isEmpty()) {
+					String uuidStr = targetMeta.get(0).asString();
+					try {
+						UUID targetUUID = UUID.fromString(uuidStr);
+						Player target = Bukkit.getPlayer(targetUUID);
+						if (target != null && target.isOnline()) {
+							target.teleport(lastLoc);
+						}
+					} catch (IllegalArgumentException e) {
+						// Invalid UUID stored; ignore.
+					}
+				}
+			}
+			// Update the last teleport location to the destination of this teleport.
+			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo()));
+		}
+	}
+	
 	public int getSwapSkelChance() {
 		return SwapSkelChance;
   	}
