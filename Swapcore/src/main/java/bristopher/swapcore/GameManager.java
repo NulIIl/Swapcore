@@ -1,11 +1,9 @@
 package bristopher.swapcore;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 public class GameManager {
 
@@ -25,26 +23,26 @@ public class GameManager {
     }
     public static void startGame(CommandSender sender) {
         if (game != null) {
-            sender.sendMessage(Component.text("Error, game already in progress.").color(NamedTextColor.RED));
+            sender.sendMessage(ChatColor.RED + "Error, game already in progress.");
             return;
         }
         game = new Game();
         if(game.startUpGame(timer))
-            sender.sendMessage(Component.text("Swapcore starting!.").color(NamedTextColor.GREEN));
+            sender.sendMessage(ChatColor.GREEN + "Swapcore starting!.");
         else {
-            sender.sendMessage(Component.text("Error. Not enough valid players to start game.").color(NamedTextColor.RED));
+            sender.sendMessage(ChatColor.RED + "Error. Not enough valid players to start game.");
             game = null;
         }
     }
 
     public static void stopGame(CommandSender sender) {
         if (game == null) {
-            sender.sendMessage(Component.text("Error, game has not yet been started.").color(NamedTextColor.RED));
+            sender.sendMessage(ChatColor.RED + "Error, game has not yet been started.");
             return;
         }
         game.closeDownGame();
         game = null;
-        sender.sendMessage(Component.text("Swapcore ending!.").color(NamedTextColor.GREEN));
+        sender.sendMessage(ChatColor.GREEN + "Swapcore ending!.");
     }
 
     public static void stopGame() {
@@ -53,7 +51,7 @@ public class GameManager {
 
         game.closeDownGame();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(Component.text("Swapcore ending!.").color(NamedTextColor.GREEN));
+            p.sendMessage(ChatColor.GREEN + "Swapcore ending!.");
         }
     }
 
@@ -72,7 +70,7 @@ public class GameManager {
     public static boolean isPlayerPartOfGame(Player p) {
         if (game == null)
             return false;
-        if (game.players.contains(p.getUniqueId()))
+        if (game.players.contains(p))
             return true;
         return false;
     }
