@@ -1,6 +1,7 @@
 package bristopher.swapcore;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -51,7 +52,7 @@ public class Game {
                 continue;
             players.add(p.getUniqueId());
         }
-        Bukkit.getServer().broadcast(net.kyori.adventure.text.Component.text("num of players: " + players.size()));
+        Bukkit.getServer().broadcast("num of players: " + players.size(), "bukkit.broadcast");
         if (players.size() < 2) {
             players.clear();
             return false;
@@ -72,7 +73,7 @@ public class Game {
             continue;
         }
         if (Bukkit.getOnlinePlayers().size() < 2 || players.size() - offline.size() < 2) {
-            Bukkit.getLogger().info(net.kyori.adventure.text.format.NamedTextColor.RED + "Error. Not enough players online.");
+            Bukkit.getLogger().info(ChatColor.RED + "Error. Not enough players online.");
             return;
         }
         int rand1 = (int) (Math.random() * players.size());
@@ -87,7 +88,7 @@ public class Game {
         Location p2Loc = p2.getLocation();
         p1.teleport(p2Loc);
         p2.teleport(p1Loc);
-        Bukkit.getServer().broadcast(net.kyori.adventure.text.Component.text(p1.getName() + " has Zombie swapped with " + p2.getName()));
+        Bukkit.broadcastMessage(p1.getName() + " has Zombie swapped with " + p2.getName());
         offline.clear();
     }
 

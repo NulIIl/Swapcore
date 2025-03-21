@@ -3,7 +3,6 @@ package bristopher.swapcore.listeners;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -12,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,12 +20,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import bristopher.swapcore.Swapcore;
@@ -141,7 +136,6 @@ public class MobListener implements Listener {
                     Location randomPlayerLoc = randomPlayer.getLocation();
                     hitPlayer.teleport(randomPlayerLoc);
                     randomPlayer.teleport(hitPlayerLoc);
-					Bukkit.getServer().broadcast(net.kyori.adventure.text.Component.text(hitPlayer.getName() + " has Zombie swapped with " + randomPlayer.getName()));
                 }
                 
                 // Remove the marker so the effect only triggers once
@@ -149,44 +143,7 @@ public class MobListener implements Listener {
             }
         }
 	}
-
-	@EventHandler
-	public void onEndermanTarget(EntityTargetEvent event) {
-		if (event.getEntity() instanceof Enderman enderman) {
-			if (event.getTarget() instanceof Player player) {
-				enderman.setMetadata("swapEnderman", new FixedMetadataValue(Swapcore.getInstance(), player.getUniqueId().toString()));
-			} else {
-				enderman.removeMetadata("swapEnderman", Swapcore.getInstance());
-				enderman.removeMetadata("lastTeleport", Swapcore.getInstance());
-			}
-		}
-	}
-
-	// Every time an Enderman teleports, teleport the aggroed player to its previous teleport destination.
-	@EventHandler
-	public void onEndermanTeleport(EntityTeleportEvent event) {
-		if (event.getEntity() instanceof Enderman enderman && enderman.hasMetadata("swapEnderman")) {
-			if (enderman.hasMetadata("lastTeleport")) {//if swapable
-				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
-				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
-				if (!targetMeta.isEmpty()) {//if player is aggroed
-					String uuidStr = targetMeta.get(0).asString();
-					try {
-						UUID targetUUID = UUID.fromString(uuidStr);
-						Player target = Bukkit.getPlayer(targetUUID);
-						if (target != null && target.isOnline()) {//if player is online
-							target.teleport(lastLoc);
-						}
-					} catch (IllegalArgumentException e) {
-
-					}
-				}
-			}
-			// Update the last teleport location to the destination of this teleport.
-			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo()));
-		}
-	}
-
+	
 
 	public int getSwapSkelChance() {
 		return SwapSkelChance;

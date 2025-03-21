@@ -9,14 +9,9 @@ public final class Swapcore extends JavaPlugin {
     private static Swapcore instance;
     private static GameManager gameManager;
 
-    public static GameManager getGameManager() {
-        return gameManager;
-    }
-
     public static Swapcore getInstance() {
         return instance;
     }
-    
     @Override
     public void onEnable() {
         instance = this;
