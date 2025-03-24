@@ -40,7 +40,7 @@ public class MobListener implements Listener {
 
 		//Equipment Base Variables
 		private int SwapSkelPunch = 3; //swap skeleton punch level, out of 5
-		private int SwapZombSpeed = 3; //swap skeleton punch level, out of 5
+		private double SwapZombSpeed = 2.5; //swap skeleton punch level, out of 5
 
 	@EventHandler
     public void spawnListener(CreatureSpawnEvent e) {				
@@ -173,6 +173,8 @@ public class MobListener implements Listener {
 			// If a previous teleport location exists, teleport the target player there.
 			if (enderman.hasMetadata("lastTeleport")) {
 				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
+				Bukkit.broadcastMessage(String.valueOf(lastLoc));
+				
 				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
 				if (!targetMeta.isEmpty()) {
 					String uuidStr = targetMeta.get(0).asString();
@@ -214,10 +216,10 @@ public class MobListener implements Listener {
   	public void setSwapSkelPunch(int SwapSkelPunch) {
     	this.SwapSkelPunch = SwapSkelPunch;
   	}
-	public int getSwapZombSpeed() {
+	public double getSwapZombSpeed() {
 		return SwapZombSpeed;
   	}
-  	public void setSwapZombSpeed(int SwapZombSpeed) {
+  	public void setSwapZombSpeed(double SwapZombSpeed) {
   		this.SwapZombSpeed = SwapZombSpeed;
   	}
 }
