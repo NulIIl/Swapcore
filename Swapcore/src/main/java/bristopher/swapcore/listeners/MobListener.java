@@ -43,8 +43,8 @@ public class MobListener implements Listener {
     	public int pigmanSwapChance = 33;  //pigman swap chance, out of 100
 
 		//Equipment Base Variables
-		private int SwapSkelPunch = 3; //swap skeleton punch level, out of 5
 		private double SwapZombSpeed = 2.5; //swap skeleton punch level, out of 5
+		private int SwapSkelPunch = 2; //swap skeleton punch level, out of 5
 
 	@EventHandler
     public void spawnListener(CreatureSpawnEvent e) {				
