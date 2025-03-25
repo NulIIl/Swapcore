@@ -9,12 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
@@ -37,10 +39,13 @@ public class MobListener implements Listener {
 		//Spawn Chance Varaibles
 		private int SwapSkelChance = 100; //swap skeleton spawn chance, out of 100
 		private int SwapZombChance = 50; //swap skeleton spawn chance, out of 100
+		public int pigmanAutoaggroChance = 20; //pigman autoaggro chance, out of 100
+    	public int pigmanSwapChance = 33;  //pigman swap chance, out of 100
 
 		//Equipment Base Variables
 		private int SwapSkelPunch = 3; //swap skeleton punch level, out of 5
 		private int SwapZombSpeed = 3; //swap skeleton punch level, out of 5
+		
 
 	@EventHandler
     public void spawnListener(CreatureSpawnEvent e) {				
@@ -50,12 +55,26 @@ public class MobListener implements Listener {
 			if (random.nextInt(1, 100) < SwapSkelChance) {
 				SkeletonSwap(entity);
 			}
-		}  
+		} 
+		else if (entity instanceof PigZombie) {
+            // Determine pigman variant using a single random value (0–99)
+            int chance = random.nextInt(100);
+            // If within the first 20%...
+            if (chance < pigmanAutoaggroChance) {
+                autoaggroPigman((PigZombie) entity);
+            } 
+            // Otherwise, of the remaining 80%, 33% become swap pigmen:
+            else 
+				if (chance < pigmanAutoaggroChance + (int) ((100 - pigmanAutoaggroChance) * (pigmanSwapChance / 100.0))) {
+                swapPigman((PigZombie) entity);
+            }
+            // Else, the pigman remains normal.
+        } 
 		else if (entity instanceof Zombie) {
 			if (random.nextInt(1, 100) < SwapZombChance) {
 				ZombieSwap(entity);
 			}
-		}  
+		}   
 		else{
 			 //if not skeleton or zombie, do nothing
 		}
@@ -83,6 +102,61 @@ public class MobListener implements Listener {
 		((Zombie) entity).setMetadata("swapZombie", new FixedMetadataValue(Swapcore.getInstance(), true));
 		//sets a flag to identify the zombie as a swap zombie
 	}
+
+	public void autoaggroPigman(PigZombie pigman) {
+        // Mark as an autoaggro swap pigman.
+        pigman.setMetadata("swapPigman", new FixedMetadataValue(Swapcore.getInstance(), "autoaggro"));
+        // Set purple leather boots.
+        ItemStack leatherBoots = new ItemStack(Material.LEATHER_BOOTS);
+        LeatherArmorMeta bootsMeta = (LeatherArmorMeta) leatherBoots.getItemMeta();
+        bootsMeta.setColor(Color.PURPLE);
+        bootsMeta.addEnchant(Enchantment.MENDING, 1, true);
+        leatherBoots.setItemMeta(bootsMeta);
+        pigman.getEquipment().setBoots(leatherBoots);
+        pigman.getEquipment().setBootsDropChance(0.04F);
+        
+        // Give a stone sword in the main hand.
+        ItemStack stoneSword = new ItemStack(Material.STONE_SWORD);
+        pigman.getEquipment().setItemInMainHand(stoneSword);
+        pigman.getEquipment().setItemInMainHandDropChance(0.04F);
+        
+        // Set the pigman to be angry (autoaggro behavior).
+        pigman.setAngry(true);
+
+		// Schedule a task to assign a target.
+		Bukkit.getScheduler().runTaskLater(Swapcore.getInstance(), () -> {
+			List<Player> players = pigman.getWorld().getPlayers();
+			if (!players.isEmpty()) {
+				// Find the nearest player.
+				Player nearest = null;
+				double minDist = Double.MAX_VALUE;
+				Location pigLoc = pigman.getLocation();
+				for (Player p : players) {
+					double dist = pigLoc.distanceSquared(p.getLocation());
+					if (dist < minDist) {
+						minDist = dist;
+						nearest = p;
+					}
+				}
+				if (nearest != null) {
+					pigman.setTarget(nearest);
+				}
+			}
+		}, 1L);
+    }
+
+	public void swapPigman(PigZombie pigman) {
+        // Mark as a swap pigman.
+        pigman.setMetadata("swapPigman", new FixedMetadataValue(Swapcore.getInstance(), "swap"));
+        // Set purple leather boots.
+        ItemStack leatherBoots = new ItemStack(Material.LEATHER_BOOTS);
+        LeatherArmorMeta bootsMeta = (LeatherArmorMeta) leatherBoots.getItemMeta();
+        bootsMeta.setColor(Color.PURPLE);
+        bootsMeta.addEnchant(Enchantment.MENDING, 1, true);
+        leatherBoots.setItemMeta(bootsMeta);
+        pigman.getEquipment().setBoots(leatherBoots);
+        pigman.getEquipment().setBootsDropChance(0.04F);
+    }
 
 
 	
@@ -142,55 +216,81 @@ public class MobListener implements Listener {
                     hitPlayer.teleport(randomPlayerLoc);
                     randomPlayer.teleport(hitPlayerLoc);
                 }
-                
-                // Remove the marker so the effect only triggers once
-                zombie.removeMetadata("swapZombie", Swapcore.getInstance());
+            }
+        }
+
+		if (event.getDamager() instanceof PigZombie pigman && pigman.hasMetadata("swapPigman")) {
+            if (event.getEntity() instanceof Player hitPlayer) {
+                // Gather all pigmen from every loaded world.
+                List<PigZombie> pigmen = new ArrayList<>();
+                for (World world : Bukkit.getWorlds()) {
+                    for (Entity entity : world.getEntities()) {
+                        if (entity instanceof PigZombie p) {
+                            pigmen.add(p);
+                        }
+                    }
+                }
+                // Optionally remove the attacker to avoid swapping with itself.
+                pigmen.remove(pigman);
+                if (!pigmen.isEmpty()) {
+                    Random random = new Random();
+                    PigZombie randomPigman = pigmen.get(random.nextInt(pigmen.size()));
+                    Location pigmanLoc = randomPigman.getLocation();
+                    Location playerLoc = hitPlayer.getLocation();
+                    hitPlayer.teleport(pigmanLoc);
+                    randomPigman.teleport(playerLoc);
+                }
+                // Remove the metadata so this effect only triggers once.
+                pigman.removeMetadata("swapPigman", Swapcore.getInstance());
             }
         }
 	}
 
-	// When an Enderman targets a player, store that player's UUID.
 	@EventHandler
 	public void onEndermanTarget(EntityTargetEvent event) {
 		if (event.getEntity() instanceof Enderman enderman) {
 			if (event.getTarget() instanceof Player player) {
-				// Store the target player's UUID for later swapping.
 				enderman.setMetadata("swapEnderman", new FixedMetadataValue(Swapcore.getInstance(), player.getUniqueId().toString()));
-				// (Optional) You could also store the current location as the initial lastTeleport:
-				// enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation()));
+				// Set initial lastTeleport to the Enderman's spawn/current location if not already set.
+				if (!enderman.hasMetadata("lastTeleport")) {
+					enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation()));
+				}
 			} else {
-				// If the Enderman loses its player target, clear metadata.
+				// If the target is not a player, clear the metadata.
 				enderman.removeMetadata("swapEnderman", Swapcore.getInstance());
 				enderman.removeMetadata("lastTeleport", Swapcore.getInstance());
 			}
 		}
 	}
 
-	// Every time an Enderman teleports, teleport the aggroed player to its previous teleport destination.
 	@EventHandler
 	public void onEndermanTeleport(EntityTeleportEvent event) {
 		if (event.getEntity() instanceof Enderman enderman && enderman.hasMetadata("swapEnderman")) {
-			// If a previous teleport location exists, teleport the target player there.
-			if (enderman.hasMetadata("lastTeleport")) {
-				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
-				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
-				if (!targetMeta.isEmpty()) {
-					String uuidStr = targetMeta.get(0).asString();
-					try {
-						UUID targetUUID = UUID.fromString(uuidStr);
-						Player target = Bukkit.getPlayer(targetUUID);
-						if (target != null && target.isOnline()) {
-							target.teleport(lastLoc);
-						}
-					} catch (IllegalArgumentException e) {
-						// Invalid UUID stored; ignore.
+			// Retrieve the stored last location (default to the Enderman's current location if not set)
+			Location lastLoc = enderman.hasMetadata("lastTeleport")
+					? (Location) enderman.getMetadata("lastTeleport").get(0).value()
+					: enderman.getLocation();
+					
+			// Teleport the aggroed player to the stored last location.
+			List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
+			if (!targetMeta.isEmpty()) {
+				String uuidStr = targetMeta.get(0).asString();
+				try {
+					UUID targetUUID = UUID.fromString(uuidStr);
+					Player target = Bukkit.getPlayer(targetUUID);
+					if (target != null && target.isOnline()) {
+						target.teleport(lastLoc);
 					}
+				} catch (IllegalArgumentException e) {
+					// Invalid UUID stored; ignore.
 				}
 			}
-			// Update the last teleport location to the destination of this teleport.
+			
+			// Now update the lastTeleport metadata with the destination of this teleport.
 			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo()));
 		}
 	}
+
 	
 	public int getSwapSkelChance() {
 		return SwapSkelChance;
@@ -204,6 +304,20 @@ public class MobListener implements Listener {
   	}
 	public void setSwapZombChance(int SwapZombChance) {
   		this.SwapZombChance = SwapZombChance;
+	}
+
+	public int getPigmanAutoaggroChance() {
+		return pigmanAutoaggroChance;
+  	}
+	public void setPigmanAutoaggroChance(int pigmanAutoaggroChance) {
+  		this.pigmanAutoaggroChance = pigmanAutoaggroChance;
+	}
+
+	public int getPigmanSwapChance() {
+		return pigmanSwapChance;
+  	}
+	public void setPigmanSwapChance(int pigmanSwapChance) {
+  		this.pigmanSwapChance = pigmanSwapChance;
 	}
 
 
