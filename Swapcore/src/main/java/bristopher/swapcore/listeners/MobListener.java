@@ -10,6 +10,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Enderman;
@@ -157,7 +158,7 @@ public class MobListener implements Listener {
 				// Store the target player's UUID for later swapping.
 				enderman.setMetadata("swapEnderman", new FixedMetadataValue(Swapcore.getInstance(), player.getUniqueId().toString()));
 				// (Optional) You could also store the current location as the initial lastTeleport:
-				// enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation()));
+				enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation()));
 			} else {
 				// If the Enderman loses its player target, clear metadata.
 				enderman.removeMetadata("swapEnderman", Swapcore.getInstance());
@@ -174,7 +175,11 @@ public class MobListener implements Listener {
 			if (enderman.hasMetadata("lastTeleport")) {
 				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
 				Bukkit.broadcastMessage(String.valueOf(lastLoc));
-				
+				// Place a block at the last teleport location
+                assert lastLoc != null;
+                Block block = (Block) lastLoc.getBlock();
+				block.setType(Material.STONE); // Change to the desired block type
+
 				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
 				if (!targetMeta.isEmpty()) {
 					String uuidStr = targetMeta.get(0).asString();
@@ -190,7 +195,7 @@ public class MobListener implements Listener {
 				}
 			}
 			// Update the last teleport location to the destination of this teleport.
-			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo()));
+			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo().clone()));
 		}
 	}
 	
