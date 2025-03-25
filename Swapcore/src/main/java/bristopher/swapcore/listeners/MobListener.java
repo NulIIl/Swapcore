@@ -252,7 +252,7 @@ public class MobListener implements Listener {
 				enderman.setMetadata("swapEnderman", new FixedMetadataValue(Swapcore.getInstance(), player.getUniqueId().toString()));
 				// Set initial lastTeleport to the Enderman's spawn/current location if not already set.
 				if (!enderman.hasMetadata("lastTeleport")) {
-					enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation()));
+					enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation().clone()));
 				}
 			} else {
 				// If the target is not a player, clear the metadata.
@@ -285,7 +285,7 @@ public class MobListener implements Listener {
 				}
 			}
 			// Update the last teleport location to the destination of this teleport.
-			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo()));
+			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo().clone()));
 		}
 	}
 
