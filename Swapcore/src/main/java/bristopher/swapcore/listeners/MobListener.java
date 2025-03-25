@@ -44,8 +44,7 @@ public class MobListener implements Listener {
 
 		//Equipment Base Variables
 		private int SwapSkelPunch = 3; //swap skeleton punch level, out of 5
-		private int SwapZombSpeed = 3; //swap skeleton punch level, out of 5
-		
+		private double SwapZombSpeed = 2.5; //swap skeleton punch level, out of 5
 
 	@EventHandler
     public void spawnListener(CreatureSpawnEvent e) {				
@@ -266,27 +265,26 @@ public class MobListener implements Listener {
 	@EventHandler
 	public void onEndermanTeleport(EntityTeleportEvent event) {
 		if (event.getEntity() instanceof Enderman enderman && enderman.hasMetadata("swapEnderman")) {
-			// Retrieve the stored last location (default to the Enderman's current location if not set)
-			Location lastLoc = enderman.hasMetadata("lastTeleport")
-					? (Location) enderman.getMetadata("lastTeleport").get(0).value()
-					: enderman.getLocation();
-					
-			// Teleport the aggroed player to the stored last location.
-			List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
-			if (!targetMeta.isEmpty()) {
-				String uuidStr = targetMeta.get(0).asString();
-				try {
-					UUID targetUUID = UUID.fromString(uuidStr);
-					Player target = Bukkit.getPlayer(targetUUID);
-					if (target != null && target.isOnline()) {
-						target.teleport(lastLoc);
+			// If a previous teleport location exists, teleport the target player there.
+			if (enderman.hasMetadata("lastTeleport")) {
+				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
+				Bukkit.broadcastMessage(String.valueOf(lastLoc));
+				
+				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
+				if (!targetMeta.isEmpty()) {
+					String uuidStr = targetMeta.get(0).asString();
+					try {
+						UUID targetUUID = UUID.fromString(uuidStr);
+						Player target = Bukkit.getPlayer(targetUUID);
+						if (target != null && target.isOnline()) {
+							target.teleport(lastLoc);
+						}
+					} catch (IllegalArgumentException e) {
+						// Invalid UUID stored; ignore.
 					}
-				} catch (IllegalArgumentException e) {
-					// Invalid UUID stored; ignore.
 				}
 			}
-			
-			// Now update the lastTeleport metadata with the destination of this teleport.
+			// Update the last teleport location to the destination of this teleport.
 			enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), event.getTo()));
 		}
 	}
@@ -328,10 +326,10 @@ public class MobListener implements Listener {
   	public void setSwapSkelPunch(int SwapSkelPunch) {
     	this.SwapSkelPunch = SwapSkelPunch;
   	}
-	public int getSwapZombSpeed() {
+	public double getSwapZombSpeed() {
 		return SwapZombSpeed;
   	}
-  	public void setSwapZombSpeed(int SwapZombSpeed) {
+  	public void setSwapZombSpeed(double SwapZombSpeed) {
   		this.SwapZombSpeed = SwapZombSpeed;
   	}
 }
