@@ -44,6 +44,14 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
                             mobListener.setSwapZombSpeed(value);
                             sender.sendMessage("SwapZombSpeed set to " + value);
                             break;
+                        case "pigmanAutoaggroChance":
+                            mobListener.setPigmanAutoaggroChance(value);
+                            sender.sendMessage("PigmanAutoaggroChance set to " + value);
+                            break;
+                        case "pigmanSwapChance":
+                            mobListener.setPigmanSwapChance(value);
+                            sender.sendMessage("PigmanSwapChance set to " + value);
+                            break;
                         default:
                             sender.sendMessage("Invalid variable");
                             return false;
@@ -75,6 +83,12 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
             }
             if ("zombiespeed".startsWith(partial)) {
                 completions.add("zombiespeed");
+            }
+            if ("pigmanAutoaggroChance".startsWith(partial)) {
+                completions.add("pigmanAutoaggroChance");
+            }
+            if ("pigmanSwapChance".startsWith(partial)) {
+                completions.add("pigmanSwapChance");
             }
         }
         // You could also add predictions for the second argument if desired (e.g., common values)
