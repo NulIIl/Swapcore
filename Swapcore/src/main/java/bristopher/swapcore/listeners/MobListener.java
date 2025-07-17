@@ -35,7 +35,7 @@ import org.bukkit.util.Vector;
 import bristopher.swapcore.Swapcore;
 
 public class MobListener implements Listener {
-    							
+
 		//Spawn Chance Varaibles
 		private int SwapSkelChance = 100; //swap skeleton spawn chance, out of 100
 		private int SwapZombChance = 50; //swap skeleton spawn chance, out of 100
@@ -47,46 +47,46 @@ public class MobListener implements Listener {
 		private int SwapSkelPunch = 2; //swap skeleton punch level, out of 5
 
 	@EventHandler
-    public void spawnListener(CreatureSpawnEvent e) {				
+    public void spawnListener(CreatureSpawnEvent e) {
         LivingEntity entity = e.getEntity();
         Random random = new Random();
 		if (entity instanceof Skeleton) {
 			if (random.nextInt(1, 100) < SwapSkelChance) {
 				SkeletonSwap(entity);
 			}
-		} 
+		}
 		else if (entity instanceof PigZombie) {
             // Determine pigman variant using a single random value (0–99)
             int chance = random.nextInt(100);
             // If within the first 20%...
             if (chance < pigmanAutoaggroChance) {
                 autoaggroPigman((PigZombie) entity);
-            } 
+            }
             // Otherwise, of the remaining 80%, 33% become swap pigmen:
-            else 
+            else
 				if (chance < pigmanAutoaggroChance + (int) ((100 - pigmanAutoaggroChance) * (pigmanSwapChance / 100.0))) {
                 swapPigman((PigZombie) entity);
             }
             // Else, the pigman remains normal.
-        } 
+        }
 		else if (entity instanceof Zombie) {
 			if (random.nextInt(1, 100) < SwapZombChance) {
 				ZombieSwap(entity);
 			}
-		}   
+		}
 		else{
 			 //if not skeleton or zombie, do nothing
 		}
     }
 
-	public void SkeletonSwap(LivingEntity entity) {		
-		((Skeleton) entity).setMetadata("swapSkeleton", new FixedMetadataValue(Swapcore.getInstance(), true));	
+	public void SkeletonSwap(LivingEntity entity) {
+		((Skeleton) entity).setMetadata("swapSkeleton", new FixedMetadataValue(Swapcore.getInstance(), true));
 		ItemStack swapbow = new ItemStack(Material.BOW);
-		swapbow.addUnsafeEnchantment(Enchantment.ARROW_KNOCKBACK, SwapSkelPunch);
+		swapbow.addUnsafeEnchantment(Enchantment.PUNCH, SwapSkelPunch);
 		entity.getEquipment().setItemInMainHand(swapbow);
 		entity.getEquipment().setItemInMainHandDropChance(0.04F);
 		//creates knockback bow
-	
+
 		ItemStack leatherHelmet = new ItemStack(Material.LEATHER_HELMET);
 		LeatherArmorMeta meta = (LeatherArmorMeta) leatherHelmet.getItemMeta();
 		meta.setColor(Color.PURPLE);
@@ -97,15 +97,17 @@ public class MobListener implements Listener {
 		//makes shiny purple helmet
     }
 
-	public void ZombieSwap(LivingEntity entity) {			
+	public void ZombieSwap(LivingEntity entity) {
 		((Zombie) entity).setMetadata("swapZombie", new FixedMetadataValue(Swapcore.getInstance(), true));
 		//sets a flag to identify the zombie as a swap zombie
 	}
 
 	public void autoaggroPigman(PigZombie pigman) {
         // Mark as an autoaggro swap pigman.
-        pigman.setMetadata("swapPigman", new FixedMetadataValue(Swapcore.getInstance(), "autoaggro"));
-        // Set purple leather boots.
+        pigman.setMetadata("swapPigman", new FixedMetadataValue(Swapcore.getInstance(), "swap"));
+
+
+		// Set purple leather boots.
         ItemStack leatherBoots = new ItemStack(Material.LEATHER_BOOTS);
         LeatherArmorMeta bootsMeta = (LeatherArmorMeta) leatherBoots.getItemMeta();
         bootsMeta.setColor(Color.PURPLE);
@@ -113,14 +115,12 @@ public class MobListener implements Listener {
         leatherBoots.setItemMeta(bootsMeta);
         pigman.getEquipment().setBoots(leatherBoots);
         pigman.getEquipment().setBootsDropChance(0.04F);
-        
+
         // Give a stone sword in the main hand.
         ItemStack stoneSword = new ItemStack(Material.STONE_SWORD);
         pigman.getEquipment().setItemInMainHand(stoneSword);
         pigman.getEquipment().setItemInMainHandDropChance(0.04F);
-        
-        // Set the pigman to be angry (autoaggro behavior).
-        pigman.setAngry(true);
+
 
 		// Schedule a task to assign a target.
 		Bukkit.getScheduler().runTaskLater(Swapcore.getInstance(), () -> {
@@ -158,12 +158,12 @@ public class MobListener implements Listener {
     }
 
 
-	
+
 	@EventHandler
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) 
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
 	{
-		if (event.getDamager() instanceof Arrow arrow) {//if arrow           
-			if (arrow.getShooter() instanceof Skeleton skeleton && skeleton.hasMetadata("swapSkeleton")) {//if swap skeleton}   
+		if (event.getDamager() instanceof Arrow arrow) {//if arrow
+			if (arrow.getShooter() instanceof Skeleton skeleton && skeleton.hasMetadata("swapSkeleton")) {//if swap skeleton}
 				Entity damaged = event.getEntity();
 				if (damaged instanceof LivingEntity target) {//if player
 					if (event.getFinalDamage() <= 0) {
@@ -172,12 +172,12 @@ public class MobListener implements Listener {
 					Location skelLoc = skeleton.getLocation();
 					Location targetLoc = target.getLocation();
 						//store skeleton and player
-				
+
 					Vector knockbackVelocity = arrow.getVelocity().normalize().multiply(SwapSkelPunch);
 					skeleton.teleport(targetLoc);
 					target.teleport(skelLoc);
 					Bukkit.getScheduler().runTask(Swapcore.getInstance(), () -> {target.setVelocity(knockbackVelocity);});
-						//swap player and skeleton and keep momentum			
+						//swap player and skeleton and keep momentum
 				}
 			}
 		}
@@ -191,19 +191,19 @@ public class MobListener implements Listener {
                 leatherHelmet.setItemMeta(meta);
                 zombie.getEquipment().setHelmet(leatherHelmet);
                 zombie.getEquipment().setHelmetDropChance(0.04F);
-                
+
                 // Cosmetic addition: give a stick in the off-hand
                 ItemStack cosmeticStick = new ItemStack(Material.STICK);
 				meta.addEnchant(Enchantment.MENDING, 1, true);
                 zombie.getEquipment().setItemInOffHand(cosmeticStick);
                 zombie.getEquipment().setItemInOffHandDropChance(0.04F);
-                
+
                 // Speed boost: multiply the base movement speed by 3 (~300% speed)
-                if (zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED) != null) {
-                    double baseSpeed = zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
-                    zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(baseSpeed * SwapZombSpeed);
+                if (zombie.getAttribute(Attribute.MOVEMENT_SPEED) != null) {
+                    double baseSpeed = zombie.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue();
+                    zombie.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(baseSpeed * SwapZombSpeed);
                 }
-                
+
                 // Swap the hit player with a random online player (excluding the hit player)
                 List<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
                 onlinePlayers.remove(hitPlayer);
@@ -246,16 +246,39 @@ public class MobListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEndermanTarget(EntityTargetEvent event) {
-		if (event.getEntity() instanceof Enderman enderman) {
-			if (event.getTarget() instanceof Player player) {
+	public void onEndermanTarget(EntityTargetEvent event) { //when an entity targets something
+		if (event.getEntity() instanceof Enderman enderman) { //if the entity is an enderman
+			if (event.getTarget() instanceof Player player) { //and if the target is a player
+				// gives the enderman the swapEnderman metadata and stores the player's UUID in that metadata
 				enderman.setMetadata("swapEnderman", new FixedMetadataValue(Swapcore.getInstance(), player.getUniqueId().toString()));
-				// Set initial lastTeleport to the Enderman's spawn/current location if not already set.
+				// if not already set, give the enderman the lastTeleport metadata and stores the coordinates of where that enderman was standing
 				if (!enderman.hasMetadata("lastTeleport")) {
 					enderman.setMetadata("lastTeleport", new FixedMetadataValue(Swapcore.getInstance(), enderman.getLocation().clone()));
 				}
+
+				// makes a scheduler that runs the code after 30 ticks
+				Bukkit.getScheduler().runTaskLater(Swapcore.getInstance(), () -> {
+					if (!enderman.isDead() && enderman.hasMetadata("swapEnderman")) {
+						// schedule 5 teleports with small delays between them
+						for (int i = 0; i < 5; i++) {
+							int finalI = i;
+							Bukkit.getScheduler().runTaskLater(Swapcore.getInstance(), () -> {
+								if (!enderman.isDead()) {
+									enderman.teleport();
+									Bukkit.broadcastMessage(String.valueOf(finalI));
+								}
+							}, i * 10L); // 10 ticks (0.5 second) between each teleport
+						}
+					}
+				}, 30L); // 20 ticks = 1 second
+
+
+
+
+
+
 			} else {
-				// If the target is not a player, clear the metadata.
+				// if the target is not a player, clear the metadata
 				enderman.removeMetadata("swapEnderman", Swapcore.getInstance());
 				enderman.removeMetadata("lastTeleport", Swapcore.getInstance());
 			}
@@ -264,24 +287,24 @@ public class MobListener implements Listener {
 
 	@EventHandler
 	public void onEndermanTeleport(EntityTeleportEvent event) {
+		//if an enderman has the swapEnderman metadata
 		if (event.getEntity() instanceof Enderman enderman && enderman.hasMetadata("swapEnderman")) {
-			// If a previous teleport location exists, teleport the target player there.
+			// if the enderman has lastTeleport metadata
 			if (enderman.hasMetadata("lastTeleport")) {
+				//create the Location variable lastLoc to store the lastTeleport metadata (coords)
 				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
-				Bukkit.broadcastMessage(String.valueOf(lastLoc));
-				
+				Bukkit.broadcastMessage(String.valueOf(lastLoc)); //broadcast the location in chat to test that it works, delete later
+				// create the List variable targetMeta to store the swapEnderman metadata (player id)
 				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
 				if (!targetMeta.isEmpty()) {
-					String uuidStr = targetMeta.get(0).asString();
+					String uuidStr = targetMeta.get(0).asString(); //turn the List into a String
 					try {
-						UUID targetUUID = UUID.fromString(uuidStr);
-						Player target = Bukkit.getPlayer(targetUUID);
+						UUID targetUUID = UUID.fromString(uuidStr); //turn the String into a UUID
+						Player target = Bukkit.getPlayer(targetUUID); //make the player with the targetUUID the target
 						if (target != null && target.isOnline()) {
-							target.teleport(lastLoc);
+							target.teleport(lastLoc); //teleport the player to the last location
 						}
-					} catch (IllegalArgumentException e) {
-						// Invalid UUID stored; ignore.
-					}
+					} catch (IllegalArgumentException e) {} //for invalid UUID, ignore
 				}
 			}
 			// Update the last teleport location to the destination of this teleport.
@@ -289,7 +312,7 @@ public class MobListener implements Listener {
 		}
 	}
 
-	
+
 	public int getSwapSkelChance() {
 		return SwapSkelChance;
   	}

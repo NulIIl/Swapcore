@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Swapcore.iml" filepath="$PROJECT_DIR$/.idea/Swapcore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Swapcore.Swapcore.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Swapcore.Swapcore.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Swapcore.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Swapcore.main.iml" />
     </modules>
   </component>
 </project>
