@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import net.minecraft.util.datafix.fixes.DataConverterEntityZombifiedPiglinRename;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -22,10 +23,7 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -102,6 +100,10 @@ public class MobListener implements Listener {
 		//sets a flag to identify the zombie as a swap zombie
 	}
 
+@EventHandler
+	public void spawnAutoAggroPigman(EntityTargetLivingEntityEvent event) {
+		Bukkit.getLogger().info(event.getReason().toString());
+	}
 	public void autoaggroPigman(PigZombie pigman) {
         // Mark as an autoaggro swap pigman.
         pigman.setMetadata("swapPigman", new FixedMetadataValue(Swapcore.getInstance(), "swap"));

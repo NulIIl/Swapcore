@@ -53,7 +53,7 @@ public class Game {
             players.add(p.getUniqueId());
         }
         Bukkit.getServer().broadcast("num of players: " + players.size(), "bukkit.broadcast");
-        if (players.size() < 2) {
+        if (players.size() < 1) { //set to 1 so null can test solo, probably will break everything
             players.clear();
             return false;
         }

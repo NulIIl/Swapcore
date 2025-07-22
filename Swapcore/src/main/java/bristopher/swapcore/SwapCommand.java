@@ -39,7 +39,7 @@ public class SwapCommand implements CommandExecutor {
                 }
                 return true;
             }
-            sender.sendMessage(ChatColor.RED + "Invalid sub-command. Valid sub-commands: start, stop, list");
+            sender.sendMessage(ChatColor.RED + "Invalid sub-commands. Valid sub-commands: start, stop, list");
             return false;
         }
         return false;
