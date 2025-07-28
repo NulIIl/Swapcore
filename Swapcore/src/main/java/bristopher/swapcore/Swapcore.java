@@ -1,9 +1,8 @@
 package bristopher.swapcore;
 
+import bristopher.swapcore.listeners.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import bristopher.swapcore.listeners.MobListener;
 
 public final class Swapcore extends JavaPlugin {
     private static Swapcore instance;
@@ -16,16 +15,24 @@ public final class Swapcore extends JavaPlugin {
     public void onEnable() {
         instance = this;
         gameManager = new GameManager();
-        MobListener mobListener = new MobListener();
+        Spiders spiders = new Spiders();
+        Skeletons skeletons = new Skeletons();
+        Zombies zombies = new Zombies();
+        Endermen endermen = new Endermen();
+        Pigmen pigmen = new Pigmen();
+        Ghasts ghasts = new Ghasts();
+        Creepers creepers = new Creepers();
+        Blazes blazes = new Blazes();
+        Withers withers = new Withers();
 
         SwapCommand swapCommand = new SwapCommand();
         registerCommand("swap", swapCommand);
        
-        SwapEditCommand swapEditCommand = new SwapEditCommand(mobListener);
+        SwapEditCommand swapEditCommand = new SwapEditCommand(spiders, skeletons, zombies, endermen, pigmen, ghasts, creepers, blazes, withers);
         registerCommand("SwapEdit", swapEditCommand);
         this.getCommand("SwapEdit").setTabCompleter(swapEditCommand);
 
-        registerEvent(mobListener);
+        registerEvent(skeletons, zombies, endermen, pigmen, spiders, ghasts, creepers, blazes, withers);
     }
 
     @Override
@@ -33,8 +40,16 @@ public final class Swapcore extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    private void registerEvent(MobListener event) {
-        this.getServer().getPluginManager().registerEvents(event, this);
+    private void registerEvent(Skeletons skeletons, Zombies zombies, Endermen endermen, Pigmen pigmen, Spiders spiders, Ghasts ghasts, Creepers creepers, Blazes blazes, Withers withers) {
+        this.getServer().getPluginManager().registerEvents(skeletons, this);
+        this.getServer().getPluginManager().registerEvents(zombies, this);
+        this.getServer().getPluginManager().registerEvents(endermen, this);
+        this.getServer().getPluginManager().registerEvents(pigmen, this);
+        this.getServer().getPluginManager().registerEvents(spiders, this);
+        this.getServer().getPluginManager().registerEvents(ghasts, this);
+        this.getServer().getPluginManager().registerEvents(creepers, this);
+        this.getServer().getPluginManager().registerEvents(blazes, this);
+        this.getServer().getPluginManager().registerEvents(withers, this);
     }
 
     private void registerCommand(String command, CommandExecutor executor) {

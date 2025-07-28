@@ -1,5 +1,5 @@
 name: Swapcore
-version: '1.1-SNAPSHOT'
+version: '1.0-SNAPSHOT'
 main: bristopher.swapcore.Swapcore
 api-version: '1.20'
 authors: [<Null>, kilololololololobytes]

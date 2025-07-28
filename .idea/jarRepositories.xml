@@ -41,5 +41,15 @@
       <option name="name" value="maven2" />
       <option name="url" value="https://repo.codemc.io/repository/nms/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven3" />
+      <option name="name" value="maven3" />
+      <option name="url" value="https://libraries.minecraft.net" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven4" />
+      <option name="name" value="maven4" />
+      <option name="url" value="https://mojang.libraries.io/maven2" />
+    </remote-repository>
   </component>
 </project>

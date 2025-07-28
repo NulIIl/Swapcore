@@ -3,19 +3,34 @@ package bristopher.swapcore;
 import java.util.ArrayList;
 import java.util.List;
 
+import bristopher.swapcore.listeners.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import bristopher.swapcore.listeners.MobListener;
-
 public class SwapEditCommand implements CommandExecutor, TabCompleter  {
 
-    private final MobListener mobListener;
+    private final Spiders spiders;
+    private final Skeletons skeletons;
+    private final Zombies zombies;
+    private final Endermen endermen;
+    private final Pigmen pigmen;
+    private final Ghasts ghasts;
+    private final Creepers creepers;
+    private final Blazes blazes;
+    private final Withers withers;
 
-    public SwapEditCommand(MobListener mobListener) {
-        this.mobListener = mobListener;
+    public SwapEditCommand(Spiders spiders, Skeletons skeletons, Zombies zombies, Endermen endermen, Pigmen pigmen, Ghasts ghasts, Creepers creepers, Blazes blazes, Withers withers) {
+        this.spiders = spiders;
+        this.skeletons = skeletons;
+        this.zombies = zombies;
+        this.endermen = endermen;
+        this.pigmen = pigmen;
+        this.ghasts = ghasts;
+        this.creepers = creepers;
+        this.blazes = blazes;
+        this.withers = withers;
     }
 
     @Override
@@ -28,30 +43,47 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
                       //gets the value to set it to
 
                     switch (variable.toLowerCase()) {
+                        case "endermanchance":
+                            endermen.setSwapEndermanChanceChance(value);
+                            sender.sendMessage("SwapEndermanChance set to " + value);
+                            break;
+                        case "spiderchance":
+                            spiders.setSwapSpiderChance(value);
+                            sender.sendMessage("SwapSpiderChance set to " + value);
+                            break;
                         case "skeletonchance":
-                            mobListener.setSwapSkelChance(value);
+                            skeletons.setSwapSkelChance(value);
                             sender.sendMessage("SwapSkelChance set to " + value);
                             break;
                         case "skeletonpunch":
-                            mobListener.setSwapSkelPunch(value);
+                            skeletons.setSwapSkelPunch(value);
                             sender.sendMessage("SwapSkelPunch set to " + value);
                             break;
                         case "zombiechance":
-                            mobListener.setSwapZombChance(value);
+                            zombies.setSwapZombChance(value);
                             sender.sendMessage("SwapZombChance set to " + value);
                             break;
                         case "zombiespeed":
-                            mobListener.setSwapZombSpeed(value);
+                            zombies.setSwapZombSpeed(value);
                             sender.sendMessage("SwapZombSpeed set to " + value);
                             break;
-                        case "pigmanAutoaggroChance":
-                            mobListener.setPigmanAutoaggroChance(value);
+                        case "pigmanautoaggrochance":
+                            pigmen.setPigmanAutoaggroChance(value);
                             sender.sendMessage("PigmanAutoaggroChance set to " + value);
                             break;
-                        case "pigmanSwapChance":
-                            mobListener.setPigmanSwapChance(value);
+                        case "pigmanswapchance":
+                            pigmen.setPigmanSwapChance(value);
                             sender.sendMessage("PigmanSwapChance set to " + value);
                             break;
+                        case "ghastswapchance":
+                            ghasts.setSwapGhastChance(value);
+                            sender.sendMessage("GhastSwapChance set to " + value);
+                            break;
+                        case "creeperswapchance":
+                            creepers.setSwapCreeperChance(value);
+                            sender.sendMessage("CreeperSwapChance set to " + value);
+                            break;
+
                         default:
                             sender.sendMessage("Invalid variable");
                             return false;

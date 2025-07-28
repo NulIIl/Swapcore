@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -66,7 +65,9 @@ public class Game {
 
     public void removePlayer(Player p) {
         players.remove(p.getUniqueId());
-    }    public void swapPlayerWithRandomPlayer(Player p) {
+    }
+
+    public void swapPlayerWithRandomPlayer(Player p) {
         for (UUID id : players) {
             if (Bukkit.getPlayer(id) == null)
                 offline.add(players.indexOf(id));
@@ -92,12 +93,7 @@ public class Game {
         offline.clear();
     }
 
-    public void swapPlayerWithMob(Player p, LivingEntity e) {
-        Location pLoc = p.getLocation();
-        Location eLoc = e.getLocation();
-        p.teleport(eLoc);
-        e.teleport(pLoc);
-    }
+
 
 
 }
