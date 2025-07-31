@@ -7,9 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Game {
 
@@ -89,8 +91,35 @@ public class Game {
         Location p2Loc = p2.getLocation();
         p1.teleport(p2Loc);
         p2.teleport(p1Loc);
-        Bukkit.broadcastMessage(p1.getName() + " has Zombie swapped with " + p2.getName());
         offline.clear();
+    }
+
+    public static void massSwap() {
+        //create a list of players in survival mode
+        List<Player> survivalPlayers = Bukkit.getOnlinePlayers().stream()
+                .filter(player -> player.getGameMode() == GameMode.SURVIVAL)
+                .collect(Collectors.toList());
+        Collections.shuffle(survivalPlayers); //shuffle the list
+
+        //confirms there are at least 2 players
+        if (survivalPlayers.size() < 2) return;
+
+        //store first player location for wrap-around swap
+        Location firstPlayerLoc = survivalPlayers.get(0).getLocation();
+
+        //swap each player with the next one
+        for (int i = 0; i < survivalPlayers.size(); i++) {
+            Player currentPlayer = survivalPlayers.get(i);
+
+            //for the wrap around swap (last player goes to first players location)
+            if (i == survivalPlayers.size() - 1) {
+                currentPlayer.teleport(firstPlayerLoc);
+            } else {
+                //swap with the next player in the list
+                Player nextPlayer = survivalPlayers.get(i + 1);
+                currentPlayer.teleport(nextPlayer.getLocation());
+            }
+        }
     }
 
 

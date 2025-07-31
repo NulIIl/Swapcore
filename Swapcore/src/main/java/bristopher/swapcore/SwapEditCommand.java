@@ -20,8 +20,9 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
     private final Creepers creepers;
     private final Blazes blazes;
     private final Withers withers;
+    private final Dragons dragons;
 
-    public SwapEditCommand(Spiders spiders, Skeletons skeletons, Zombies zombies, Endermen endermen, Pigmen pigmen, Ghasts ghasts, Creepers creepers, Blazes blazes, Withers withers) {
+    public SwapEditCommand(Spiders spiders, Skeletons skeletons, Zombies zombies, Endermen endermen, Pigmen pigmen, Ghasts ghasts, Creepers creepers, Blazes blazes, Withers withers, Dragons dragons) {
         this.spiders = spiders;
         this.skeletons = skeletons;
         this.zombies = zombies;
@@ -31,6 +32,7 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
         this.creepers = creepers;
         this.blazes = blazes;
         this.withers = withers;
+        this.dragons = dragons;
     }
 
     @Override
@@ -67,12 +69,8 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
                             zombies.setSwapZombSpeed(value);
                             sender.sendMessage("SwapZombSpeed set to " + value);
                             break;
-                        case "pigmanautoaggrochance":
-                            pigmen.setPigmanAutoaggroChance(value);
-                            sender.sendMessage("PigmanAutoaggroChance set to " + value);
-                            break;
                         case "pigmanswapchance":
-                            pigmen.setPigmanSwapChance(value);
+                            pigmen.setSwapPigmanChance(value);
                             sender.sendMessage("PigmanSwapChance set to " + value);
                             break;
                         case "ghastswapchance":
@@ -83,6 +81,18 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
                             creepers.setSwapCreeperChance(value);
                             sender.sendMessage("CreeperSwapChance set to " + value);
                             break;
+                        case "blazeswapchance":
+                            blazes.setSwapBlazeChance(value);
+                            sender.sendMessage("BlazeSwapChance set to " + value);
+                            break;
+                        case "witherswapchance":
+                            withers.setSwapWitherChance(value);
+                            sender.sendMessage("WitherSwapChance set to " + value);
+                        case "dragonswapchance":
+                            dragons.setSwapDragonChance(value);
+                            sender.sendMessage("SwapDragonChance set to " + value);
+                            break;
+
 
                         default:
                             sender.sendMessage("Invalid variable");
@@ -116,12 +126,13 @@ public class SwapEditCommand implements CommandExecutor, TabCompleter  {
             if ("zombiespeed".startsWith(partial)) {
                 completions.add("zombiespeed");
             }
-            if ("pigmanAutoaggroChance".startsWith(partial)) {
-                completions.add("pigmanAutoaggroChance");
-            }
             if ("pigmanSwapChance".startsWith(partial)) {
                 completions.add("pigmanSwapChance");
             }
+            if ("dragonchance".startsWith(partial)) {
+                completions.add("dragonchance");
+            }
+
         }
         // You could also add predictions for the second argument if desired (e.g., common values)
         return completions;

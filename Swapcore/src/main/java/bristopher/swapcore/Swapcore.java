@@ -24,15 +24,17 @@ public final class Swapcore extends JavaPlugin {
         Creepers creepers = new Creepers();
         Blazes blazes = new Blazes();
         Withers withers = new Withers();
+        Dragons dragons = new Dragons();
 
         SwapCommand swapCommand = new SwapCommand();
         registerCommand("swap", swapCommand);
-       
-        SwapEditCommand swapEditCommand = new SwapEditCommand(spiders, skeletons, zombies, endermen, pigmen, ghasts, creepers, blazes, withers);
+   
+        SwapEditCommand swapEditCommand = new SwapEditCommand(spiders, skeletons, zombies, endermen, 
+        pigmen, ghasts, creepers, blazes, withers, dragons);
         registerCommand("SwapEdit", swapEditCommand);
         this.getCommand("SwapEdit").setTabCompleter(swapEditCommand);
 
-        registerEvent(skeletons, zombies, endermen, pigmen, spiders, ghasts, creepers, blazes, withers);
+        registerEvent(skeletons, zombies, endermen, pigmen, spiders, ghasts, creepers, blazes, withers, dragons);  // Add dragons here
     }
 
     @Override
@@ -40,7 +42,9 @@ public final class Swapcore extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    private void registerEvent(Skeletons skeletons, Zombies zombies, Endermen endermen, Pigmen pigmen, Spiders spiders, Ghasts ghasts, Creepers creepers, Blazes blazes, Withers withers) {
+    private void registerEvent(Skeletons skeletons, Zombies zombies, Endermen endermen, 
+    Pigmen pigmen, Spiders spiders, Ghasts ghasts, Creepers creepers, Blazes blazes, 
+    Withers withers, Dragons dragons) {
         this.getServer().getPluginManager().registerEvents(skeletons, this);
         this.getServer().getPluginManager().registerEvents(zombies, this);
         this.getServer().getPluginManager().registerEvents(endermen, this);
@@ -50,6 +54,7 @@ public final class Swapcore extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(creepers, this);
         this.getServer().getPluginManager().registerEvents(blazes, this);
         this.getServer().getPluginManager().registerEvents(withers, this);
+        this.getServer().getPluginManager().registerEvents(dragons, this);
     }
 
     private void registerCommand(String command, CommandExecutor executor) {

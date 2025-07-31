@@ -104,12 +104,6 @@ public class Endermen implements Listener {
 	}
 
 
-
-
-	public int getSwapEndermanChanceChance() {
-		return SwapEndermanChance;
-	}
-
 	public void setSwapEndermanChanceChance(int SwapEndermanChance) {
 		this.SwapEndermanChance = SwapEndermanChance;
 	}

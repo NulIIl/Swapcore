@@ -2,6 +2,7 @@ package bristopher.swapcore.listeners;
 
 import bristopher.swapcore.Swapcore;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -61,10 +62,12 @@ public class Creepers implements Listener {
             Player farthestPlayer = null;
             double maxDistance = -1;
             for (Player player : creeper.getWorld().getPlayers()) {
-                double distance = player.getLocation().distanceSquared(creeperLoc);
-                if (distance > maxDistance) {
-                    maxDistance = distance;
-                    farthestPlayer = player;
+                if (player.getGameMode() == GameMode.SURVIVAL) {
+                    double distance = player.getLocation().distanceSquared(creeperLoc);
+                    if (distance > maxDistance) {
+                        maxDistance = distance;
+                        farthestPlayer = player;
+                    }
                 }
             }
             Location farthestLoc = farthestPlayer.getLocation();

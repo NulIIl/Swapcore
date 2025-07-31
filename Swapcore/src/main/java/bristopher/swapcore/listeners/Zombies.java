@@ -30,7 +30,7 @@ public class Zombies implements Listener {
         LivingEntity entity = e.getEntity();
         Random random = new Random();
 
-		if (entity instanceof Zombie) {
+		if (entity instanceof Zombie &! (entity instanceof PigZombie)) {
 			if (random.nextInt(1, 100) < SwapZombChance) {
 				swapZombie(entity);
 			}
@@ -53,6 +53,7 @@ public class Zombies implements Listener {
 					return;
 				}
 				zombie.removeMetadata("swapZombie", Swapcore.getInstance()); //remove metadata so they won't keep teleporting players
+				//give helmet
                 ItemStack leatherHelmet = new ItemStack(Material.LEATHER_HELMET);
                 LeatherArmorMeta meta = (LeatherArmorMeta) leatherHelmet.getItemMeta();
                 meta.setColor(Color.PURPLE);
@@ -61,21 +62,27 @@ public class Zombies implements Listener {
                 zombie.getEquipment().setHelmet(leatherHelmet);
                 zombie.getEquipment().setHelmetDropChance(0.04F);
 
-                // Cosmetic addition: give a stick in the off-hand
+                //give a stick in the off-hand
                 ItemStack cosmeticStick = new ItemStack(Material.STICK);
 				meta.addEnchant(Enchantment.MENDING, 1, true);
                 zombie.getEquipment().setItemInOffHand(cosmeticStick);
                 zombie.getEquipment().setItemInOffHandDropChance(0.04F);
 
-                // Speed boost: multiply the base movement speed by 3 (~300% speed)
+                //multiply the base movement speed by SwapZombSpeed
                     double baseSpeed = zombie.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue();
                     zombie.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(baseSpeed * SwapZombSpeed);
 
 
-                // Swap the hit player with a random online player (excluding the hit player)
-                List<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-                onlinePlayers.remove(hitPlayer);
-                if (!onlinePlayers.isEmpty()) {
+                // Swap the hit player with a random online survival mode player (excluding the hit player)
+				//create list of survival players excluding hit player
+				List<Player> onlinePlayers = new ArrayList<>();
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					if (player.getGameMode() == GameMode.SURVIVAL && player != hitPlayer) {
+						onlinePlayers.add(player);
+					}
+				}
+				// picks random player from the list and swaps hit player with random player
+				if (!onlinePlayers.isEmpty()) {
                     Random random = new Random();
                     Player randomPlayer = onlinePlayers.get(random.nextInt(onlinePlayers.size()));
                     Location hitPlayerLoc = hitPlayer.getLocation();
@@ -87,15 +94,11 @@ public class Zombies implements Listener {
         }
 	}
 
-	public int getSwapZombChance() {
-		return SwapZombChance;
-  	}
+
 	public void setSwapZombChance(int SwapZombChance) {
   		this.SwapZombChance = SwapZombChance;
 	}
-	public double getSwapZombSpeed() {
-		return SwapZombSpeed;
-  	}
+
   	public void setSwapZombSpeed(double SwapZombSpeed) {
   		this.SwapZombSpeed = SwapZombSpeed;
   	}

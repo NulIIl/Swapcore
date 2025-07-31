@@ -8,13 +8,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Random;
 
 public class Ghasts implements Listener {
 
-    private int SwapGhastChance = 100; //swap spider spawn percent chance
+    private int SwapGhastChance = 100; //swap ghast spawn percent chance
 
     @EventHandler
     public void spawnListener(CreatureSpawnEvent e) {
@@ -32,20 +34,17 @@ public class Ghasts implements Listener {
     }
 
     @EventHandler
-    public void onFireballHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Fireball){
-            Fireball fireball = (Fireball) event.getDamager();
-            if (fireball.getShooter() instanceof Ghast ghast && ghast.hasMetadata("swapGhast")){
-                Entity damaged = event.getEntity();
-                if (damaged instanceof LivingEntity target){
-                    if (event.getFinalDamage() > 0){
-                        damaged.teleport(ghast.getLocation());
-                    }
-
+    public void onFireballHit(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Fireball fireball) {
+            if (fireball.getShooter() instanceof Ghast ghast && ghast.hasMetadata("swapGhast")) {
+                Entity hitEntity = event.getHitEntity();
+                if (hitEntity instanceof LivingEntity target) {
+                    hitEntity.teleport(ghast.getLocation());
                 }
             }
         }
     }
+
 
 
 
