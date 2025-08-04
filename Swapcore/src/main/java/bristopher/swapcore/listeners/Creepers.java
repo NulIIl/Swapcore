@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class Creepers implements Listener {
 
-    private int SwapCreeperChance = 100; //swap spider spawn percent chance
+    private int SwapCreeperChance = 50; //swap creeper spawn percent chance
 
     @EventHandler
     public void spawnListener(CreatureSpawnEvent e) {
@@ -45,7 +45,6 @@ public class Creepers implements Listener {
     @EventHandler
     public void beforeSwapCreeperExplosion(ExplosionPrimeEvent event) { // when the creeper decides to explode (before actually exploding)
         if (event.getEntity() instanceof Creeper creeper && creeper.hasMetadata("swapCreeper")) {
-            Bukkit.broadcastMessage("get location!");
             Location creeperLoc = creeper.getLocation(); //get location and turn into metadata
             creeper.setMetadata("creeperLoc", new FixedMetadataValue(Swapcore.getInstance(), creeperLoc));
         }
@@ -54,7 +53,6 @@ public class Creepers implements Listener {
     @EventHandler
     public void onSwapCreeperExplosion(EntityExplodeEvent event) {
         if (event.getEntity() instanceof Creeper creeper && creeper.hasMetadata("swapCreeper")) {
-            Bukkit.broadcastMessage("Creeper exploded!");
 
 
             Location creeperLoc = (Location) creeper.getMetadata("creeperLoc").get(0).value(); //get metadata and turn into location

@@ -32,16 +32,14 @@ import java.util.stream.Collectors;
 
 public class Withers implements Listener {
 
-    private int SwapWitherChance = 100; //swap wither spawn percent chance
+    private boolean SwapWitherChance = true; //swap wither toggle
 
     @EventHandler
     public void spawnListener(CreatureSpawnEvent e) {
         LivingEntity entity = e.getEntity();
         Random random = new Random();
-        if (entity instanceof Wither) {
-            if (random.nextInt(1, 100) < SwapWitherChance) {
-                swapWither(entity);
-            }
+        if (entity instanceof Wither && SwapWitherChance) {
+            swapWither(entity);
         }
     }
 
@@ -96,20 +94,18 @@ public class Withers implements Listener {
 
 
                     pushWitherOpposite(wither);// calls the weird opposite velocity vector bukkit runnable
-                    Bukkit.broadcastMessage("it should turn on now");
 
                     wither.setInvulnerabilityTicks(300); //redo summon animation
 
                     Bukkit.getScheduler().runTaskLater(Swapcore.getInstance(), () ->{ //run only after summon animation
                         Game.massSwap(); //make all players swap with each other upon wither activation
-                        Bukkit.broadcastMessage("it no works :(");
                     }, 300L);
                 }
             } else {
-                // makes a threshold that tracks every 25 hearts of damage
+                // makes a threshold that tracks every 20 hearts of damage
                 double newHealth = wither.getHealth() - event.getFinalDamage();
-                double currentThreshold = Math.ceil(wither.getHealth() / 50.0) * 50;
-                double newThreshold = Math.ceil(newHealth / 50.0) * 50;
+                double currentThreshold = Math.ceil(wither.getHealth() / 40.0) * 40;
+                double newThreshold = Math.ceil(newHealth / 40.0) * 40;
                 Player damager = null;
 
                 if (newThreshold < currentThreshold || wither.getHealth() <= 120) { //if the damage crossed a new threshold or wither has <= 60 hearts
@@ -173,7 +169,7 @@ public class Withers implements Listener {
 
 
 
-    public void setSwapWitherChance(int SwapWitherChance) {
+    public void setSwapWitherChance(boolean SwapWitherChance) {
         this.SwapWitherChance = SwapWitherChance;
     }
 }

@@ -23,6 +23,7 @@ public final class Swapcore extends JavaPlugin {
         Ghasts ghasts = new Ghasts();
         Creepers creepers = new Creepers();
         Blazes blazes = new Blazes();
+        WitherSkeletons witherSkeletons = new WitherSkeletons();
         Withers withers = new Withers();
         Dragons dragons = new Dragons();
 
@@ -30,11 +31,11 @@ public final class Swapcore extends JavaPlugin {
         registerCommand("swap", swapCommand);
    
         SwapEditCommand swapEditCommand = new SwapEditCommand(spiders, skeletons, zombies, endermen, 
-        pigmen, ghasts, creepers, blazes, withers, dragons);
+        pigmen, ghasts, creepers, blazes, witherSkeletons, withers, dragons);
         registerCommand("SwapEdit", swapEditCommand);
         this.getCommand("SwapEdit").setTabCompleter(swapEditCommand);
 
-        registerEvent(skeletons, zombies, endermen, pigmen, spiders, ghasts, creepers, blazes, withers, dragons);  // Add dragons here
+        registerEvent(skeletons, zombies, endermen, pigmen, spiders, ghasts, creepers, blazes, witherSkeletons, withers, dragons);  // Add dragons here
     }
 
     @Override
@@ -43,7 +44,7 @@ public final class Swapcore extends JavaPlugin {
     }
 
     private void registerEvent(Skeletons skeletons, Zombies zombies, Endermen endermen, 
-    Pigmen pigmen, Spiders spiders, Ghasts ghasts, Creepers creepers, Blazes blazes, 
+    Pigmen pigmen, Spiders spiders, Ghasts ghasts, Creepers creepers, Blazes blazes, WitherSkeletons witherSkeletons,
     Withers withers, Dragons dragons) {
         this.getServer().getPluginManager().registerEvents(skeletons, this);
         this.getServer().getPluginManager().registerEvents(zombies, this);
@@ -53,6 +54,7 @@ public final class Swapcore extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(ghasts, this);
         this.getServer().getPluginManager().registerEvents(creepers, this);
         this.getServer().getPluginManager().registerEvents(blazes, this);
+        this.getServer().getPluginManager().registerEvents(witherSkeletons, this);
         this.getServer().getPluginManager().registerEvents(withers, this);
         this.getServer().getPluginManager().registerEvents(dragons, this);
     }

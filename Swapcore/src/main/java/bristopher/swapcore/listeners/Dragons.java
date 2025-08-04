@@ -2,6 +2,7 @@ package bristopher.swapcore.listeners;
 
 import bristopher.swapcore.Swapcore;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,16 +18,16 @@ import java.util.List;
 
 public class Dragons implements Listener {
 
-    private int SwapDragonChance = 100; //swap dragon spawn percent chance
+    private boolean SwapDragonChance = true; //swap dragon toggle
 
     @EventHandler
     public void spawnListener(CreatureSpawnEvent e) {
         LivingEntity entity = e.getEntity();
         Random random = new Random();
-        if (entity instanceof EnderDragon) {
-            if (random.nextInt(1, 100) < SwapDragonChance) {
+        if (entity instanceof EnderDragon && SwapDragonChance) {
+
                 swapDragon(entity);
-            }
+
         }
     }
 
@@ -38,23 +39,15 @@ public class Dragons implements Listener {
 
 
 
-    public void setSwapDragonChance(int SwapDragonChance) {
+    public void setSwapDragonChance(boolean SwapDragonChance) {
         this.SwapDragonChance = SwapDragonChance;
     }
 
     @EventHandler
     public void onDragonBreathDamage(EntityDamageByEntityEvent event) {
-        // Check if the damage was caused by dragon's breath
-        if (event.getDamager() instanceof AreaEffectCloud cloud
-                && cloud.getSource() instanceof EnderDragon dragon
-                && dragon.hasMetadata("swapDragon")) {
-
-            // Check if the entity that was hit is a player
-            if (event.getEntity() instanceof Player hitPlayer) {
-                if (event.getFinalDamage() <= 0) {
-                    return;
-                }
-
+        // Check if the damage was caused by dragon's breath, and that it hit a player
+        if (event.getDamager() instanceof AreaEffectCloud cloud && cloud.getParticle() == Particle.DRAGON_BREATH && event.getEntity() instanceof Player hitPlayer) {
+            Bukkit.broadcastMessage("" + cloud.getParticle());
                 // Create list of survival players excluding hit player
                 List<Player> onlinePlayers = new ArrayList<>();
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -71,8 +64,9 @@ public class Dragons implements Listener {
                     Location randomPlayerLoc = randomPlayer.getLocation();
                     hitPlayer.teleport(randomPlayerLoc);
                     randomPlayer.teleport(hitPlayerLoc);
+
                 }
-            }
+
         }
     }
 

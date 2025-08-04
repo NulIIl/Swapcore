@@ -3,6 +3,7 @@ package bristopher.swapcore.listeners;
 import bristopher.swapcore.Swapcore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,12 +11,13 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.Material; // Import Material
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
 public class Blazes implements Listener {
 
-    private int SwapBlazeChance = 100; //swap spider spawn percent chance
+    private int SwapBlazeChance = 80; //swap spider spawn percent chance
 
     @EventHandler
     public void spawnListener(CreatureSpawnEvent e) {
@@ -31,13 +33,37 @@ public class Blazes implements Listener {
     public void swapBlaze(LivingEntity entity) {
         // Store the swapBlaze flag
         entity.setMetadata("swapBlaze", new FixedMetadataValue(Swapcore.getInstance(), true));
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Location loc = entity.getLocation();
+                // Spawn particles around the blaze's body
+                Random random = new Random();
+                for (int i = 0; i < 3; i++) {
+                    double offsetX = (random.nextDouble() - 0.5) * 0.5;
+                    double offsetY = random.nextDouble() * 0.5;
+                    double offsetZ = (random.nextDouble() - 0.5) * 0.5;
+                    loc.getWorld().spawnParticle(
+                            Particle.DRAGON_BREATH,
+                            loc.getX() + offsetX,
+                            loc.getY() + 0.5 + offsetY,
+                            loc.getZ() + offsetZ,
+                            1, // Count
+                            0.05, 0.05, 0.05, // Spread
+                            0.01 // Speed
+                    );
+                }
+            }
+        }.runTaskTimer(Swapcore.getInstance(), 0L, 2L); // Run every 2 ticks
+
+
     }
 
     @EventHandler
     public void onSwapBlazeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof SmallFireball fireball && fireball.getShooter() instanceof Blaze blaze && blaze.hasMetadata("swapBlaze") //if a blaze with swap metadata hits player and it actually does damage
                 && event.getEntity() instanceof Player player && event.getFinalDamage() > 0) {
-            Bukkit.broadcastMessage("Blazefireball hit!");
             Location playerLoc = player.getLocation();
             Location nearestFire = null;
             double closestDistance = Double.MAX_VALUE;

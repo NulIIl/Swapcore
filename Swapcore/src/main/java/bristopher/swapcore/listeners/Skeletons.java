@@ -18,7 +18,7 @@ import java.util.Random;
 public class Skeletons implements Listener {
 
 		//Spawn Chance Varaible
-		private int SwapSkelChance = 100; //swap skeleton spawn chance, out of 100
+		private int SwapSkelChance = 80; //swap skeleton spawn chance, out of 100
 		//Equipment Base Variable
 		private int SwapSkelPunch = 2; //swap skeleton punch level, out of 5
 
@@ -39,7 +39,7 @@ public class Skeletons implements Listener {
 		ItemStack swapbow = new ItemStack(Material.BOW);
 		swapbow.addUnsafeEnchantment(Enchantment.PUNCH, SwapSkelPunch);
 		entity.getEquipment().setItemInMainHand(swapbow);
-		entity.getEquipment().setItemInMainHandDropChance(0.04F);
+		entity.getEquipment().setItemInMainHandDropChance(0.01F);
 
 
 		//makes shiny purple helmet
@@ -49,12 +49,11 @@ public class Skeletons implements Listener {
 		meta.addEnchant(Enchantment.MENDING, 1, true);
 		leatherHelmet.setItemMeta(meta);
 		entity.getEquipment().setHelmet(leatherHelmet);
-		entity.getEquipment().setHelmetDropChance(0.04F);
+		entity.getEquipment().setHelmetDropChance(0.02F);
     }
 
 	@EventHandler
-	public void onSkeletonShot(EntityDamageByEntityEvent event)
-	{
+	public void onSkeletonShot(EntityDamageByEntityEvent event) {
 		if (event.getDamager() instanceof Arrow arrow) {//if arrow
 			if (arrow.getShooter() instanceof Entity skeleton && skeleton.hasMetadata("swapSkeleton")) {//if swap skeleton
 				Entity damaged = event.getEntity();

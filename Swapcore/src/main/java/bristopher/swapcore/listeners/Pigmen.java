@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class Pigmen implements Listener {
 
-public int pigmanSwapChance = 33;  //pigman swap percent chance
+public int pigmanSwapChance = 35;  //pigman swap percent chance
 
 @EventHandler
 public void spawnListener(CreatureSpawnEvent e) {

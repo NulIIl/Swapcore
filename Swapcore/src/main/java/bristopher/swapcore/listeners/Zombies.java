@@ -21,7 +21,7 @@ import java.util.UUID;
 
 public class Zombies implements Listener {
 
-		private int SwapZombChance = 50; //swap zombie spawn percent chance
+		private int SwapZombChance = 45; //swap zombie spawn percent chance
 		private double SwapZombSpeed = 2.0; //swap zombie speed
 
 
@@ -60,13 +60,13 @@ public class Zombies implements Listener {
                 meta.addEnchant(Enchantment.MENDING, 1, true);
                 leatherHelmet.setItemMeta(meta);
                 zombie.getEquipment().setHelmet(leatherHelmet);
-                zombie.getEquipment().setHelmetDropChance(0.04F);
+                zombie.getEquipment().setHelmetDropChance(0.02F);
 
                 //give a stick in the off-hand
                 ItemStack cosmeticStick = new ItemStack(Material.STICK);
 				meta.addEnchant(Enchantment.MENDING, 1, true);
                 zombie.getEquipment().setItemInOffHand(cosmeticStick);
-                zombie.getEquipment().setItemInOffHandDropChance(0.04F);
+                zombie.getEquipment().setItemInOffHandDropChance(0.01F);
 
                 //multiply the base movement speed by SwapZombSpeed
                     double baseSpeed = zombie.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue();

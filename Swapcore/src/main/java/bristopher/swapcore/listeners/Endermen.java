@@ -60,7 +60,7 @@ public class Endermen implements Listener {
 							Bukkit.getScheduler().runTaskLater(Swapcore.getInstance(), () -> {
 								if (!enderman.isDead()) {
 									enderman.teleport();
-									Bukkit.broadcastMessage(String.valueOf(finalI));
+
 								}
 							}, i * 10L); // 10 ticks (0.5 second) between each teleport
 						}
@@ -84,7 +84,6 @@ public class Endermen implements Listener {
 			if (enderman.hasMetadata("lastTeleport")) {
 				//create the Location variable lastLoc to store the lastTeleport metadata (coords)
 				Location lastLoc = (Location) enderman.getMetadata("lastTeleport").get(0).value();
-				Bukkit.broadcastMessage(String.valueOf(lastLoc)); //broadcast the location in chat to test that it works, delete later
 				// create the List variable targetMeta to store the swapEnderman metadata (player id)
 				List<MetadataValue> targetMeta = enderman.getMetadata("swapEnderman");
 				if (!targetMeta.isEmpty()) {
@@ -93,6 +92,8 @@ public class Endermen implements Listener {
 						UUID targetUUID = UUID.fromString(uuidStr); //turn the String into a UUID
 						Player target = Bukkit.getPlayer(targetUUID); //make the player with the targetUUID the target
 						if (target != null && target.isOnline()) {
+							lastLoc.setPitch(target.getLocation().getPitch());  //keep player's pitch & yaw by applying it to the enderman's last location
+							lastLoc.setYaw(target.getLocation().getYaw());
 							target.teleport(lastLoc); //teleport the player to the last location
 						}
 					} catch (IllegalArgumentException e) {} //for invalid UUID, ignore

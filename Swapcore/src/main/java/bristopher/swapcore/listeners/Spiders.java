@@ -13,7 +13,7 @@ import bristopher.swapcore.Swapcore;
 
 public class Spiders implements Listener {
 
-    private int SwapSpiderChance = 100; //swap spider spawn percent chance
+    private int SwapSpiderChance = 80; //swap spider spawn percent chance
 
     @EventHandler
     public void spawnListener(CreatureSpawnEvent e) {
